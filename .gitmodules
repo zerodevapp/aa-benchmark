@@ -7,3 +7,6 @@
 [submodule "lib/kernel"]
 	path = lib/kernel
 	url = https://github.com/zerodevapp/kernel
+[submodule "lib/etherspot-prime-contracts"]
+	path = lib/etherspot-prime-contracts
+	url = https://github.com/etherspot/etherspot-prime-contracts
