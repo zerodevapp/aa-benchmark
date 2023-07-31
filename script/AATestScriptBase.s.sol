@@ -25,15 +25,19 @@ abstract contract AATestScriptBase is Script {
     IAccount account;
 
     function run() external {
-        (owner, key) = makeAddrAndKey("Owner");
+        (owner, key) = makeAddrAndKey("OWNER");
         account = getAccountAddr(owner);
         console.log("account address: %s", address(account));
+        console.log("owner address: %s", owner);
         uint256 deployerKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
         vm.startBroadcast(deployerKey);
         fundWallet();
         createAndSend1Wei();
         send1Wei();
         sendToken();
+        uint256 nft = mintNFT();
+        mintNFTWithEOA();
+        transferNFT(nft);
         vm.stopBroadcast();
     }
 
@@ -55,7 +59,7 @@ abstract contract AATestScriptBase is Script {
         bytes memory data = fillData(recipient, 1, "");
         UserOperation memory op = fillUserOp(data);
         op.initCode = getInitCode(owner);
-        op.verificationGasLimit = 300000;
+        op.verificationGasLimit = getCreationGasLimit();
         op.signature = getSignature(op);
         executeUserOp(op);
         assert(address(account).code.length > 0);
@@ -119,6 +123,9 @@ abstract contract AATestScriptBase is Script {
             address(recipient),
             _tokenId
         ));
+        UserOperation memory op = fillUserOp(data);
+        op.signature = getSignature(op);
+        executeUserOp(op);
         assert(ERC721(mockNFT).ownerOf(_tokenId) == recipient);
     }
     
@@ -156,4 +163,6 @@ abstract contract AATestScriptBase is Script {
     function getAccountAddr(address _owner) internal view virtual returns(IAccount _account);
     
     function getInitCode(address _owner) internal view virtual returns(bytes memory);
+
+    function getCreationGasLimit() internal view virtual returns(uint256);
 }
