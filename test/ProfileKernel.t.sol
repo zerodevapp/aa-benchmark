@@ -30,7 +30,8 @@ contract ProfileKernel is AAGasProfileBase {
     }
 
     function createAccount(address _owner) internal override {
-        factory.createAccount(_owner, 0);
+        if(address(account).code.length == 0)
+            factory.createAccount(_owner, 0);
     }
 
     function getAccountAddr(address _owner) internal override returns(IAccount) {

@@ -1,9 +1,10 @@
 account-abstraction/=lib/account-abstraction/contracts/
 ds-test/=lib/forge-std/lib/ds-test/src/
+etherspot-prime-contracts/=lib/etherspot-prime-contracts/src/
 forge-std/=lib/forge-std/src/
 kernel/=lib/kernel/
+@openzeppelin/=lib/kernel/lib/openzeppelin-contracts/
 openzeppelin-contracts/=lib/kernel/lib/openzeppelin-contracts/
-@openzeppelin/contracts/=lib/kernel/lib/openzeppelin-contracts/contracts/
 solady/=lib/kernel/lib/solady/src/
 lib/forge-std:ds-test/=lib/forge-std/lib/ds-test/src/
 lib/kernel:@openzeppelin/=lib/kernel/lib/openzeppelin-contracts/
@@ -11,4 +12,4 @@ lib/kernel:account-abstraction/=lib/kernel/lib/account-abstraction/contracts/
 lib/kernel:ds-test/=lib/kernel/lib/forge-std/lib/ds-test/src/
 lib/kernel:forge-std/=lib/kernel/lib/forge-std/src/
 lib/kernel:openzeppelin-contracts/=lib/kernel/lib/openzeppelin-contracts/
-lib/kernel:solady/=lib/kernel/lib/solady/
+lib/kernel:solady/=lib/kernel/lib/solady/src/
