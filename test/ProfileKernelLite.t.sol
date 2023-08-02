@@ -3,9 +3,10 @@ pragma solidity ^0.8.0;
 import "./TestBase.sol";
 import {KernelFactory} from "kernel/src/factory/KernelFactory.sol";
 import {Kernel, KernelStorage, Operation} from "kernel/src/Kernel.sol";
+import {KernelLiteECDSA} from "kernel/src/lite/KernelLiteECDSA.sol";
 import {ECDSAValidator } from "kernel/src/validator/ECDSAValidator.sol";
 contract ProfileKernel is AAGasProfileBase {
-    Kernel kernelImpl;
+    KernelLiteECDSA kernelImpl;
     KernelFactory factory;
     ECDSAValidator validator;
     address factoryOwner;
@@ -13,7 +14,7 @@ contract ProfileKernel is AAGasProfileBase {
         factoryOwner = makeAddr("factoryOwner");
         initializeTest();
         factory = new KernelFactory(factoryOwner);
-        kernelImpl = new Kernel(entryPoint);
+        kernelImpl = new KernelLiteECDSA(entryPoint);
         vm.startPrank(factoryOwner);
         factory.setImplementation(address(kernelImpl), true);
         vm.stopPrank();
