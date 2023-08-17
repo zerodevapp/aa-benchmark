@@ -1,6 +1,7 @@
 pragma solidity ^0.8.0;
 
 import {EntryPoint, UserOperation, IAccount} from "account-abstraction/core/EntryPoint.sol";
+import {VerifyingPaymaster} from "account-abstraction/samples/VerifyingPaymaster.sol";
 import {ECDSA} from "solady/utils/ECDSA.sol";
 import {ERC20} from "solady/tokens/ERC20.sol";
 import {ERC721} from "solady/tokens/ERC721.sol";
@@ -22,11 +23,46 @@ abstract contract AATestScriptBase is Script {
     address recipient = makeAddr("recipient");
     address owner;
     uint256 key;
-    IAccount account;
 
-    function run() external {
+    address verifier;
+    uint256 verifierKey;
+    IAccount account;
+    VerifyingPaymaster paymaster = VerifyingPaymaster(0xe1Fb85Ec54767ED89252751F6667CF566b16f1F0);
+    function (UserOperation memory) internal view returns(bytes memory) f;
+
+    function deployPaymaster() external {
+        (verifier, verifierKey) = makeAddrAndKey("VERIFIER");
+        uint256 deployerKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
+        vm.startBroadcast(deployerKey);
+        paymaster = new VerifyingPaymaster(entryPoint, verifier);
+        vm.stopBroadcast();
+    }
+
+    function runWithNoDeposit() external {
+        f = emptyPaymasterAndData;
+        (owner, key) = makeAddrAndKey("Owner-No-deposit");
+        account = getAccountAddr(owner);
+        // deposit some gas eth
+        console.log("account address: %s", address(account));
+        console.log("owner address: %s", owner);
+        uint256 deployerKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
+        vm.startBroadcast(deployerKey);
+        //fundWallet();
+        //createAndSend1Wei();
+        send1Wei();
+        sendToken();
+        uint256 nft = mintNFT();
+        mintNFTWithEOA();
+        transferNFT(nft);
+        vm.stopBroadcast();
+    }
+
+    function runWithLargeDeposit() external {
+        f = emptyPaymasterAndData;
         (owner, key) = makeAddrAndKey("OWNER");
         account = getAccountAddr(owner);
+        // deposit some gas eth
+        entryPoint.depositTo{value: 1e16}(address(account));
         console.log("account address: %s", address(account));
         console.log("owner address: %s", owner);
         uint256 deployerKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
@@ -40,10 +76,29 @@ abstract contract AATestScriptBase is Script {
         transferNFT(nft);
         vm.stopBroadcast();
     }
+    
+    function runPaymasterTest() external {
+        (verifier, verifierKey) = makeAddrAndKey("VERIFIER");
+        f = validatePaymasterAndData;
+        (owner, key) = makeAddrAndKey("Owner-Paymaster");
+        account = getAccountAddr(owner);
+        // deposit some gas eth
+        console.log("account address: %s", address(account));
+        console.log("owner address: %s", owner);
+        uint256 deployerKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
+        vm.startBroadcast(deployerKey);
+        entryPoint.depositTo{value: 1e16}(address(paymaster));
+        fundWallet();
+        createAndSend1Wei();
+        send1Wei();
+        sendToken();
+        uint256 nft = mintNFT();
+        mintNFTWithEOA();
+        transferNFT(nft);
+        vm.stopBroadcast();
+    }
 
     function fundWallet() internal {
-        // deposit some gas eth
-        entryPoint.depositTo{value: 1e16}(address(account));
         // deposit some eth for sending
         address(account).call{value: 1e16}("");
         // depsoit some token for sending
@@ -60,7 +115,6 @@ abstract contract AATestScriptBase is Script {
         UserOperation memory op = fillUserOp(data);
         op.initCode = getInitCode(owner);
         op.verificationGasLimit = getCreationGasLimit();
-        op.signature = getSignature(op);
         executeUserOp(op);
         assert(address(account).code.length > 0);
         assert(balance + 1 == recipient.balance);
@@ -72,7 +126,6 @@ abstract contract AATestScriptBase is Script {
         uint256 balance = recipient.balance;
         bytes memory data = fillData(recipient, 1, "");
         UserOperation memory op = fillUserOp(data);
-        op.signature = getSignature(op);
         executeUserOp(op);
         assert(balance + 1 == recipient.balance);
     }
@@ -88,7 +141,6 @@ abstract contract AATestScriptBase is Script {
             1
         ));
         UserOperation memory op = fillUserOp(data);
-        op.signature = getSignature(op);
         executeUserOp(op);
         assert(chainlink.balanceOf(address(account)) == balance - 1);
         assert(chainlink.balanceOf(recipient) == recipientBalance + 1);
@@ -103,7 +155,6 @@ abstract contract AATestScriptBase is Script {
         ));
         nftId = SafeMintNFT(mockNFT).totalSupply();
         UserOperation memory op = fillUserOp(data);
-        op.signature = getSignature(op);
         executeUserOp(op);
         assert(ERC721(mockNFT).balanceOf(address(account)) == balance + 1);
     }
@@ -124,7 +175,6 @@ abstract contract AATestScriptBase is Script {
             _tokenId
         ));
         UserOperation memory op = fillUserOp(data);
-        op.signature = getSignature(op);
         executeUserOp(op);
         assert(ERC721(mockNFT).ownerOf(_tokenId) == recipient);
     }
@@ -134,7 +184,7 @@ abstract contract AATestScriptBase is Script {
         op.nonce = entryPoint.getNonce(address(account), 0);
         op.callData = _data;
         op.callGasLimit = 100000;
-        op.verificationGasLimit = 100000;
+        op.verificationGasLimit = getCreationGasLimit();
         op.preVerificationGas = 10;
         op.maxFeePerGas = 500;
         op.maxPriorityFeePerGas = 1;
@@ -151,9 +201,20 @@ abstract contract AATestScriptBase is Script {
     }
     
     function executeUserOp(UserOperation memory _op) internal {
+        _op.paymasterAndData = f(_op);
+        _op.signature = getSignature(_op);
         UserOperation[] memory ops = new UserOperation[](1);
         ops[0] = _op;
         entryPoint.handleOps(ops, beneficiary);
+    }
+    
+    function emptyPaymasterAndData(UserOperation memory _op) internal pure returns(bytes memory ret){
+    }
+
+    function validatePaymasterAndData(UserOperation memory _op) internal view returns(bytes memory ret){
+        bytes32 hash = paymaster.getHash(_op, 0, 0);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(verifierKey, ECDSA.toEthSignedMessageHash(hash));
+        ret = abi.encodePacked(address(paymaster), uint256(0), uint256(0), r, s, uint8(v));
     }
     
     function getSignature(UserOperation memory _op) internal view virtual returns(bytes memory);

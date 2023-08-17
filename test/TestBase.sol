@@ -1,6 +1,7 @@
 pragma solidity ^0.8.0;
 
 import "account-abstraction/core/EntryPoint.sol";
+import {VerifyingPaymaster} from "account-abstraction/samples/VerifyingPaymaster.sol";
 import "solady/utils/ECDSA.sol";
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
@@ -18,6 +19,11 @@ abstract contract AAGasProfileBase is Test{
     IAccount public account;
     address public owner;
     uint256 public key;
+    VerifyingPaymaster public paymaster;
+    address public verifier;
+    uint256 public verifierKey;
+
+    function (UserOperation memory) internal view returns(bytes memory) f;
 
     function initializeTest() internal {
         entryPoint = EntryPoint(payable(address(0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789)));
@@ -25,23 +31,25 @@ abstract contract AAGasProfileBase is Test{
         vm.etch(0x7fc98430eAEdbb6070B35B39D798725049088348, CREATOR_0_6_BYTECODE);
         beneficiary = payable(makeAddr("beneficiary"));
         vm.deal(beneficiary, 1e18);
+        f = emptyPaymasterAndData;
+        (verifier, verifierKey) = makeAddrAndKey("Verifyer");
+        paymaster = new VerifyingPaymaster(entryPoint, verifier);
     }
 
     function setAccount() internal {
         (owner, key) = makeAddrAndKey("Owner");
         account = getAccountAddr(owner);
         vm.deal(address(account), 1e18);
-        entryPoint.depositTo{value:1}(address(account));
     }
 
     function fillUserOp(bytes memory _data) internal view returns(UserOperation memory op) {
         op.sender = address(account);
         op.nonce = entryPoint.getNonce(address(account), 0);
         op.callData = _data;
-        op.callGasLimit = 10000000;
-        op.verificationGasLimit = 10000000;
+        op.callGasLimit = 1000000;
+        op.verificationGasLimit = 1000000;
         op.preVerificationGas = 50000;
-        op.maxFeePerGas = 50000;
+        op.maxFeePerGas = 50;
         op.maxPriorityFeePerGas = 1;
     }
     
@@ -64,37 +72,41 @@ abstract contract AAGasProfileBase is Test{
         console.log("Gas Used: ", gas);
     }
 
-    function testCreation() public {
+    function testCreation() internal {
         UserOperation memory op = fillUserOp(fillData(address(0), 0, ""));
         op.initCode = getInitCode(owner);
+        op.paymasterAndData = f(op);
         op.signature = getSignature(op);
         executeUserOp(op);
     }
 
-    function testTransferNative(address _recipient, uint256 _amount) public {
+    function testTransferNative(address _recipient, uint256 _amount) internal {
         createAccount(owner);
         _amount = bound(_amount, 1, address(account).balance/2);
         UserOperation memory op = fillUserOp(fillData(_recipient, _amount, ""));
+        op.paymasterAndData = f(op);
         op.signature = getSignature(op);
         executeUserOp(op);
     }
     
-    function testTransferNative() public {
+    function testTransferNative() internal {
         createAccount(owner);
         uint256 amount = 5e17;
         address recipient = makeAddr("recipient");
         UserOperation memory op = fillUserOp(fillData(recipient, amount, ""));
+        op.paymasterAndData = f(op);
         op.signature = getSignature(op);
         executeUserOp(op);
     }
 
-    function testTransferERC20() public {
+    function testTransferERC20() internal {
         createAccount(owner);
         MockERC20 mockERC20 = new MockERC20();
         mockERC20.mint(address(account), 1e18);
         uint256 amount = 5e17;
         address recipient = makeAddr("recipient");
         UserOperation memory op = fillUserOp(fillData(address(mockERC20), 0, abi.encodeWithSelector(mockERC20.transfer.selector, recipient, amount)));
+        op.paymasterAndData = f(op);
         op.signature = getSignature(op);
         executeUserOp(op);
     }
@@ -102,16 +114,40 @@ abstract contract AAGasProfileBase is Test{
     function testAll() external {
         console.log("creation");
         testCreation();
-        (uint112 deposits, ,,,)= entryPoint.deposits(address(account));
-        console.log("deposits: ", deposits);
         console.log("native transfer");
         testTransferNative();
-        (deposits, ,,,)= entryPoint.deposits(address(account));
-        console.log("deposits: ", deposits);
         console.log("erc20 transfer");
         testTransferERC20();
-        (deposits, ,,,)= entryPoint.deposits(address(account));
-        console.log("deposits: ", deposits);
+    }
+
+    //function testAllWithPaymaster() external {
+    //    entryPoint.depositTo{value:100e18}(address(paymaster));
+    //    f = validatePaymasterAndData;
+    //    console.log("creation");
+    //    testCreation();
+    //    console.log("native transfer");
+    //    testTransferNative();
+    //    console.log("erc20 transfer");
+    //    testTransferERC20();
+    //}
+
+    //function testAllWithDeposit() external {
+    //    entryPoint.depositTo{value:1}(address(account));
+    //    console.log("creation");
+    //    testCreation();
+    //    console.log("native transfer");
+    //    testTransferNative();
+    //    console.log("erc20 transfer");
+    //    testTransferERC20();
+    //}
+
+    function emptyPaymasterAndData(UserOperation memory _op) internal pure returns(bytes memory ret){
+    }
+
+    function validatePaymasterAndData(UserOperation memory _op) internal view returns(bytes memory ret){
+        bytes32 hash = paymaster.getHash(_op, 0, 0);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(verifierKey, ECDSA.toEthSignedMessageHash(hash));
+        ret = abi.encodePacked(address(paymaster), uint256(0), uint256(0), r, s, uint8(v));
     }
 
     function getSignature(UserOperation memory _op) internal virtual returns(bytes memory);
