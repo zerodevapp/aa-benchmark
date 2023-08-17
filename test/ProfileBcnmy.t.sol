@@ -26,7 +26,7 @@ interface SmartAccount {
     ) external;
 }
 
-contract ProfileEtherspot is AAGasProfileBase {
+contract ProfileBcnmy is AAGasProfileBase {
     SmartAccountFactory factory;
     function setUp() external {
         initializeTest();
