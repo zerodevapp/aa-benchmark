@@ -17,7 +17,7 @@ pragma solidity ^0.8.0;
 //            Operation.Call
 //        );
 //    }
-//    
+//
 //    function getInitCode(address _owner) internal view override returns(bytes memory) {
 //        return abi.encodePacked(
 //            address(factory),
@@ -28,7 +28,7 @@ pragma solidity ^0.8.0;
 //            )
 //        );
 //    }
-//    
+//
 //    function getSignature(UserOperation memory _op) internal view override returns(bytes memory) {
 //        return abi.encodePacked(bytes4(0x00000000), signUserOpHash(key, _op));
 //    }

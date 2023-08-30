@@ -10,7 +10,7 @@ import "forge-std/Script.sol";
 import "forge-std/console.sol";
 
 interface SafeMintNFT {
-    function totalSupply() external view returns(uint256);
+    function totalSupply() external view returns (uint256);
     function safeMint(address _to) external;
 }
 
@@ -76,7 +76,7 @@ abstract contract AATestScriptBase is Script {
         transferNFT(nft);
         vm.stopBroadcast();
     }
-    
+
     function runPaymasterTest() external {
         (verifier, verifierKey) = makeAddrAndKey("VERIFIER");
         f = validatePaymasterAndData;
@@ -103,7 +103,7 @@ abstract contract AATestScriptBase is Script {
         address(account).call{value: 1e16}("");
         // depsoit some token for sending
         chainlink.transfer(address(account), 1e18);
-        recipient.call{value:1}("");
+        recipient.call{value: 1}("");
         chainlink.transfer(recipient, 1);
     }
 
@@ -135,24 +135,19 @@ abstract contract AATestScriptBase is Script {
         require(chainlink.balanceOf(recipient) > 0, "recipient should have token");
         uint256 balance = chainlink.balanceOf(address(account));
         uint256 recipientBalance = chainlink.balanceOf(recipient);
-        bytes memory data = fillData(address(chainlink), 0, abi.encodeWithSelector(
-            ERC20.transfer.selector,
-            address(recipient),
-            1
-        ));
+        bytes memory data =
+            fillData(address(chainlink), 0, abi.encodeWithSelector(ERC20.transfer.selector, address(recipient), 1));
         UserOperation memory op = fillUserOp(data);
         executeUserOp(op);
         assert(chainlink.balanceOf(address(account)) == balance - 1);
         assert(chainlink.balanceOf(recipient) == recipientBalance + 1);
     }
 
-    function mintNFT() internal returns(uint256 nftId) {
+    function mintNFT() internal returns (uint256 nftId) {
         require(ERC721(mockNFT).balanceOf(address(account)) == 0, "should not have any nft for mint target");
         uint256 balance = ERC721(mockNFT).balanceOf(address(account));
-        bytes memory data = fillData(address(mockNFT), 0, abi.encodeWithSelector(
-            SafeMintNFT.safeMint.selector,
-            address(account)
-        ));
+        bytes memory data =
+            fillData(address(mockNFT), 0, abi.encodeWithSelector(SafeMintNFT.safeMint.selector, address(account)));
         nftId = SafeMintNFT(mockNFT).totalSupply();
         UserOperation memory op = fillUserOp(data);
         executeUserOp(op);
@@ -168,18 +163,17 @@ abstract contract AATestScriptBase is Script {
     function transferNFT(uint256 _tokenId) internal {
         require(ERC721(mockNFT).ownerOf(_tokenId) == address(account), "should have nft to transfer");
         require(ERC721(mockNFT).balanceOf(address(recipient)) != 0, "recipient should have nft");
-        bytes memory data = fillData(address(mockNFT), 0, abi.encodeWithSelector(
-            ERC721.transferFrom.selector,
-            address(account),
-            address(recipient),
-            _tokenId
-        ));
+        bytes memory data = fillData(
+            address(mockNFT),
+            0,
+            abi.encodeWithSelector(ERC721.transferFrom.selector, address(account), address(recipient), _tokenId)
+        );
         UserOperation memory op = fillUserOp(data);
         executeUserOp(op);
         assert(ERC721(mockNFT).ownerOf(_tokenId) == recipient);
     }
-    
-    function fillUserOp(bytes memory _data) internal view returns(UserOperation memory op) {
+
+    function fillUserOp(bytes memory _data) internal view returns (UserOperation memory op) {
         op.sender = address(account);
         op.nonce = entryPoint.getNonce(address(account), 0);
         op.callData = _data;
@@ -189,17 +183,13 @@ abstract contract AATestScriptBase is Script {
         op.maxFeePerGas = 500;
         op.maxPriorityFeePerGas = 1;
     }
-    
-    function signUserOpHash(uint256 _key, UserOperation memory _op)
-        internal
-        view
-        returns (bytes memory signature)
-    {
+
+    function signUserOpHash(uint256 _key, UserOperation memory _op) internal view returns (bytes memory signature) {
         bytes32 hash = entryPoint.getUserOpHash(_op);
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(_key, ECDSA.toEthSignedMessageHash(hash));
         signature = abi.encodePacked(r, s, v);
     }
-    
+
     function executeUserOp(UserOperation memory _op) internal {
         _op.paymasterAndData = f(_op);
         _op.signature = getSignature(_op);
@@ -207,23 +197,22 @@ abstract contract AATestScriptBase is Script {
         ops[0] = _op;
         entryPoint.handleOps(ops, beneficiary);
     }
-    
-    function emptyPaymasterAndData(UserOperation memory _op) internal pure returns(bytes memory ret){
-    }
 
-    function validatePaymasterAndData(UserOperation memory _op) internal view returns(bytes memory ret){
+    function emptyPaymasterAndData(UserOperation memory _op) internal pure returns (bytes memory ret) {}
+
+    function validatePaymasterAndData(UserOperation memory _op) internal view returns (bytes memory ret) {
         bytes32 hash = paymaster.getHash(_op, 0, 0);
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(verifierKey, ECDSA.toEthSignedMessageHash(hash));
         ret = abi.encodePacked(address(paymaster), uint256(0), uint256(0), r, s, uint8(v));
     }
-    
-    function getSignature(UserOperation memory _op) internal view virtual returns(bytes memory);
 
-    function fillData(address _to, uint256 _value, bytes memory _data) internal virtual returns(bytes memory);
+    function getSignature(UserOperation memory _op) internal view virtual returns (bytes memory);
 
-    function getAccountAddr(address _owner) internal view virtual returns(IAccount _account);
-    
-    function getInitCode(address _owner) internal view virtual returns(bytes memory);
+    function fillData(address _to, uint256 _value, bytes memory _data) internal virtual returns (bytes memory);
 
-    function getCreationGasLimit() internal view virtual returns(uint256);
+    function getAccountAddr(address _owner) internal view virtual returns (IAccount _account);
+
+    function getInitCode(address _owner) internal view virtual returns (bytes memory);
+
+    function getCreationGasLimit() internal view virtual returns (uint256);
 }
