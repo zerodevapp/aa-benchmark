@@ -10,7 +10,7 @@ interface KernelFactory {
 }
 
 interface Kernel {
-    function execute(address _to, bytes calldata _data, uint256 _value, Operation _operation) external;
+    function execute(address _to, uint256 _value, bytes calldata _data, Operation _operation) external;
     function initialize(address _validator, bytes calldata _data) external;
 }
 
