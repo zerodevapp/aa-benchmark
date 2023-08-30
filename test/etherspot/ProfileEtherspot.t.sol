@@ -14,7 +14,7 @@ contract ProfileEtherspot is AAGasProfileBase {
     EtherspotWalletFactory factory;
 
     function setUp() external {
-        initializeTest();
+        initializeTest("etherspot");
         factory = EtherspotWalletFactory(ETHERSPOT_FACTORY_ADDRESS);
         vm.etch(ETHERSPOT_FACTORY_ADDRESS, ETHERSPOT_FACTORY_BYTECODE);
         vm.etch(ETHERSPOT_IMPL_ADDRESS, ETHERSPOT_IMPL_BYTECODE);

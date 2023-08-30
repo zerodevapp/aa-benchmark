@@ -14,7 +14,7 @@ contract ProfileBcnmy is AAGasProfileBase {
     SmartAccountFactory factory;
 
     function setUp() external {
-        initializeTest();
+        initializeTest("biconomy");
         factory = SmartAccountFactory(BCNMY_FACTORY);
         vm.etch(BCNMY_FACTORY, BCNMY_FACTORY_BYTECODE);
         vm.etch(BCNMY_IMPL, BCNMY_IMPL_BYTECODE);

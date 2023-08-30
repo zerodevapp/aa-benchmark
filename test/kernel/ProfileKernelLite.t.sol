@@ -18,7 +18,7 @@ contract ProfileKernelLite is AAGasProfileBase {
 
     function setUp() external {
         factoryOwner = address(0);
-        initializeTest();
+        initializeTest("kernelLite");
         factory = KernelFactory(KERNEL_FACTORY_ADDRESS);
         kernelImpl = KERNEL_LITE_ADDRESS;
         vm.etch(KERNEL_FACTORY_ADDRESS, KERNEL_FACTORY_CODE);

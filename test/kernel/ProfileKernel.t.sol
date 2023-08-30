@@ -8,7 +8,9 @@ import {
     KERNEL_FACTORY_ADDRESS,
     KERNEL_FACTORY_CODE,
     KERNEL_ADDRESS,
-    KERNEL_CODE
+    KERNEL_CODE,
+    KERNEL_ECDSA_VALIDATOR_ADDRESS,
+    KERNEL_ECDSA_VALIDATOR_CODE
 } from "./KernelArtifacts.sol";
 import {ECDSAValidator} from "kernel/src/validator/ECDSAValidator.sol";
 
@@ -20,7 +22,7 @@ contract ProfileKernel is AAGasProfileBase {
 
     function setUp() external {
         factoryOwner = address(0);
-        initializeTest();
+        initializeTest("kernelv2_1");
         factory = KernelFactory(KERNEL_FACTORY_ADDRESS);
         vm.etch(KERNEL_FACTORY_ADDRESS, KERNEL_FACTORY_CODE);
         kernelImpl = Kernel(KERNEL_ADDRESS);
@@ -28,7 +30,8 @@ contract ProfileKernel is AAGasProfileBase {
         vm.startPrank(factoryOwner);
         factory.setImplementation(address(kernelImpl), true);
         vm.stopPrank();
-        validator = new ECDSAValidator();
+        validator = ECDSAValidator(KERNEL_ECDSA_VALIDATOR_ADDRESS);
+        vm.etch(KERNEL_ECDSA_VALIDATOR_ADDRESS, KERNEL_ECDSA_VALIDATOR_CODE);
         setAccount();
     }
 

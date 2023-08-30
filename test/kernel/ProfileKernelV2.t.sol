@@ -30,7 +30,7 @@ contract ProfileKernel is AAGasProfileBase {
 
     function setUp() external {
         factoryOwner = address(0);
-        initializeTest();
+        initializeTest("kernelv2_0");
         factory = V2Factory(KERNEL_FACTORY_ADDRESS);
         vm.etch(KERNEL_FACTORY_ADDRESS, KERNEL_FACTORY_CODE);
         kernelImpl = Kernel(KERNEL_ADDRESS);

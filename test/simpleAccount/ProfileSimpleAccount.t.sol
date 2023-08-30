@@ -14,7 +14,7 @@ contract ProfileSimpleAccount is AAGasProfileBase {
     SimpleAccountFactory factory;
 
     function setUp() external {
-        initializeTest();
+        initializeTest("simpleAccount");
         factory = SimpleAccountFactory(SIMPLE_ACCOUNT_FACTORY_ADDRESS);
         vm.etch(address(factory), SIMPLE_ACCOUNT_FACTORY_BYTECODE);
         vm.etch(SIMPLE_ACCOUNT_IMPL_ADDRESS, SIMPLE_ACCOUNT_IMPL_BYTECODE);
