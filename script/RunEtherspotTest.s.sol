@@ -1,8 +1,8 @@
 pragma solidity ^0.8.0;
 
-import {EtherspotWalletFactory, EtherspotWallet} from "etherspot-prime-contracts/wallet/EtherspotWalletFactory.sol";
 import {UserOperation, IAccount} from "account-abstraction/core/EntryPoint.sol";
 import {AATestScriptBase} from "./AATestScriptBase.s.sol";
+import {EtherspotWalletFactory, EtherspotWallet} from "test/etherspot/EtherspotArtifacts.sol";
 
 contract RunEtherspotProfile is AATestScriptBase {
     EtherspotWalletFactory factory = EtherspotWalletFactory(0xBabd8268f9579b05E6042661081eF6015E1d34dE);

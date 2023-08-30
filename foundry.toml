@@ -9,6 +9,6 @@ optimize = true
 via-ir = false
 runs = 1000000
 
-fs_permissions = [{ access = "read-write", path = "./results.json"}]
+fs_permissions = [{ access = "read-write", path = "./results"}]
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config

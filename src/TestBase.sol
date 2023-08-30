@@ -79,7 +79,7 @@ abstract contract AAGasProfileBase is Test {
         entryPoint.handleOps(ops, beneficiary);
         gas = gas - gasleft();
         if (!writeGasProfile) {
-            console.log("%s Gas Used: ", _test, gas);
+            console.log("case - %s : ", _test, gas);
         }
         if (writeGasProfile && bytes(scenarioName).length > 0) {
             vm.serializeUint(jsonObj, _test, gas);
@@ -138,6 +138,7 @@ abstract contract AAGasProfileBase is Test {
         if (writeGasProfile) {
             string memory res = vm.serializeUint(jsonObj, "sum", sum);
             console.log(res);
+            vm.writeJson(res, string.concat("./results/", scenarioName, "_", name, ".json"));
         }
     }
 
@@ -152,6 +153,7 @@ abstract contract AAGasProfileBase is Test {
         if (writeGasProfile) {
             string memory res = vm.serializeUint(jsonObj, "sum", sum);
             console.log(res);
+            vm.writeJson(res, string.concat("./results/", scenarioName, "_", name, ".json"));
         }
     }
 
@@ -165,6 +167,7 @@ abstract contract AAGasProfileBase is Test {
         if (writeGasProfile) {
             string memory res = vm.serializeUint(jsonObj, "sum", sum);
             console.log(res);
+            vm.writeJson(res, string.concat("./results/", scenarioName, "_", name, ".json"));
         }
     }
 
