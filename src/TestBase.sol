@@ -121,12 +121,14 @@ abstract contract AAGasProfileBase is Test {
         mockERC20.mint(address(account), 1e18);
         uint256 amount = 5e17;
         address recipient = makeAddr("recipient");
+        uint256 balance = mockERC20.balanceOf(recipient);
         UserOperation memory op = fillUserOp(
             fillData(address(mockERC20), 0, abi.encodeWithSelector(mockERC20.transfer.selector, recipient, amount))
         );
         op.paymasterAndData = f(op);
         op.signature = getSignature(op);
         executeUserOp(op, "erc20");
+        assertEq(mockERC20.balanceOf(recipient), balance + amount);
     }
 
     function testBenchmark1Vanila() external {
@@ -160,7 +162,7 @@ abstract contract AAGasProfileBase is Test {
     function testBenchmark3Deposit() external {
         scenarioName = "deposit";
         jsonObj = string(abi.encodePacked(scenarioName, " ", name));
-        entryPoint.depositTo{value: 1}(address(account));
+        entryPoint.depositTo{value: 100e18}(address(account));
         testCreation();
         testTransferNative();
         testTransferERC20();
