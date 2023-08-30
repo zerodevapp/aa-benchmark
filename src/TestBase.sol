@@ -7,6 +7,7 @@ import "forge-std/Test.sol";
 import "forge-std/console.sol";
 
 import "src/MockERC20.sol";
+
 interface VmModified {
     function keyExists(string calldata, string calldata) external returns (bool);
     function parseJsonKeys(string calldata json, string calldata key) external pure returns (string[] memory keys);
@@ -77,10 +78,10 @@ abstract contract AAGasProfileBase is Test {
         ops[0] = _op;
         entryPoint.handleOps(ops, beneficiary);
         gas = gas - gasleft();
-        if(!writeGasProfile) {
+        if (!writeGasProfile) {
             console.log("%s Gas Used: ", _test, gas);
         }
-        if(writeGasProfile && bytes(scenarioName).length > 0) {
+        if (writeGasProfile && bytes(scenarioName).length > 0) {
             vm.serializeUint(jsonObj, _test, gas);
             sum += gas;
         }
@@ -134,7 +135,7 @@ abstract contract AAGasProfileBase is Test {
         testCreation();
         testTransferNative();
         testTransferERC20();
-        if(writeGasProfile){
+        if (writeGasProfile) {
             string memory res = vm.serializeUint(jsonObj, "sum", sum);
             console.log(res);
         }
@@ -143,12 +144,12 @@ abstract contract AAGasProfileBase is Test {
     function testBenchmark2Paymaster() external {
         scenarioName = "paymaster";
         jsonObj = string(abi.encodePacked(scenarioName, " ", name));
-        entryPoint.depositTo{value:100e18}(address(paymaster));
+        entryPoint.depositTo{value: 100e18}(address(paymaster));
         f = validatePaymasterAndData;
         testCreation();
         testTransferNative();
         testTransferERC20();
-        if(writeGasProfile){
+        if (writeGasProfile) {
             string memory res = vm.serializeUint(jsonObj, "sum", sum);
             console.log(res);
         }
@@ -157,11 +158,11 @@ abstract contract AAGasProfileBase is Test {
     function testBenchmark3Deposit() external {
         scenarioName = "deposit";
         jsonObj = string(abi.encodePacked(scenarioName, " ", name));
-        entryPoint.depositTo{value:1}(address(account));
+        entryPoint.depositTo{value: 1}(address(account));
         testCreation();
         testTransferNative();
         testTransferERC20();
-        if(writeGasProfile){
+        if (writeGasProfile) {
             string memory res = vm.serializeUint(jsonObj, "sum", sum);
             console.log(res);
         }
