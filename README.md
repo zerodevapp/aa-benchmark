@@ -8,6 +8,8 @@ All accounts use single-ECDSA signatures.  We plan on expanding to other signing
 
 **Disclaimer** the numbers are obtained from local simulations.  On-chain numbers might differ slightly.
 
+Since these are gas numbers, lower is better.
+
 |                  | Creation | Native transfer | ERC20 transfer | Total  |
 | ---------------- | -------- | --------------- | -------------- | ------ |
 | SimpleAccount    | 410061   | 97690           | 86754          | 594505 |
