@@ -62,7 +62,7 @@ abstract contract AAGasProfileBase is Test {
         op.callGasLimit = 1000000;
         op.verificationGasLimit = 1000000;
         op.preVerificationGas = 50000;
-        op.maxFeePerGas = 50;
+        op.maxFeePerGas = 2;
         op.maxPriorityFeePerGas = 1;
     }
 
@@ -73,9 +73,9 @@ abstract contract AAGasProfileBase is Test {
     }
 
     function executeUserOp(UserOperation memory _op, string memory _test) internal {
-        uint256 gas = gasleft();
         UserOperation[] memory ops = new UserOperation[](1);
         ops[0] = _op;
+        uint256 gas = gasleft();
         entryPoint.handleOps(ops, beneficiary);
         gas = gas - gasleft();
         if (!writeGasProfile) {
@@ -88,7 +88,7 @@ abstract contract AAGasProfileBase is Test {
     }
 
     function testCreation() internal {
-        UserOperation memory op = fillUserOp(fillData(address(0), 0, ""));
+        UserOperation memory op = fillUserOp("");
         op.initCode = getInitCode(owner);
         op.paymasterAndData = f(op);
         op.signature = getSignature(op);
