@@ -88,7 +88,7 @@ abstract contract AAGasProfileBase is Test {
     }
 
     function testCreation() internal {
-        UserOperation memory op = fillUserOp("");
+        UserOperation memory op = fillUserOp(fillData(address(0), 0, ""));
         op.initCode = getInitCode(owner);
         op.paymasterAndData = f(op);
         op.signature = getSignature(op);
