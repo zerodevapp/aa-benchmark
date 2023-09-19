@@ -3,10 +3,8 @@ pragma solidity ^0.8.0;
 import "src/TestBase.sol";
 import {
     MinimalAccountFactory,
-    MinimalAccount,
     MINIMAL_ACCOUNT_FACTORY_ADDRESS,
-    MINIMAL_ACCOUNT_FACTORY_BYTECODE,
-    MINIMAL_ACCOUNT_IMPL_BYTECODE
+    MINIMAL_ACCOUNT_FACTORY_BYTECODE
 } from "./MinimalAccountArtifacts.sol";
 
 contract ProfileMinimalAccount is AAGasProfileBase {
@@ -20,11 +18,13 @@ contract ProfileMinimalAccount is AAGasProfileBase {
     }
 
     function fillData(address _to, uint256 _value, bytes memory _data) internal override returns (bytes memory) {
-        return abi.encodeWithSelector(MinimalAccount.execute.selector, _to, _value, _data);
+        return abi.encode(_to, _value, _data);
     }
 
     function getSignature(UserOperation memory _op) internal override returns (bytes memory) {
-        return signUserOpHash(key, _op);
+        bytes32 hash = entryPoint.getUserOpHash(_op);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(key, ECDSA.toEthSignedMessageHash(hash));
+        return abi.encodePacked(v, r, s);
     }
 
     function createAccount(address _owner) internal override {
