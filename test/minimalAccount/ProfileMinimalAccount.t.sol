@@ -18,7 +18,7 @@ contract ProfileMinimalAccount is AAGasProfileBase {
     }
 
     function fillData(address _to, uint256 _value, bytes memory _data) internal override returns (bytes memory) {
-        return abi.encode(_to, _value, _data);
+        return abi.encodePacked(_to, uint128(_value), _data);
     }
 
     function getSignature(UserOperation memory _op) internal override returns (bytes memory) {
