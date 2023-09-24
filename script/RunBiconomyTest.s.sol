@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import {UserOperation, IAccount} from "account-abstraction/core/EntryPoint.sol";
+import {UserOperation, IAccount} from "I4337/IAccount.sol";
 import {AATestScriptBase} from "./AATestScriptBase.s.sol";
 
 interface SmartAccountFactory {

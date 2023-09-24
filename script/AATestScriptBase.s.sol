@@ -1,7 +1,8 @@
 pragma solidity ^0.8.0;
 
-import {EntryPoint, UserOperation, IAccount} from "account-abstraction/core/EntryPoint.sol";
-import {VerifyingPaymaster} from "account-abstraction/samples/VerifyingPaymaster.sol";
+import {IEntryPoint} from "I4337/IEntryPoint.sol";
+import {UserOperation, IAccount} from "I4337/IAccount.sol";
+import {IVerifyingPaymaster} from "src/interfaces/IVerifyingPaymaster.sol";
 import {ECDSA} from "solady/utils/ECDSA.sol";
 import {ERC20} from "solady/tokens/ERC20.sol";
 import {ERC721} from "solady/tokens/ERC721.sol";
@@ -15,7 +16,7 @@ interface SafeMintNFT {
 }
 
 abstract contract AATestScriptBase is Script {
-    EntryPoint entryPoint = EntryPoint(payable(address(0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789)));
+    IEntryPoint entryPoint = IEntryPoint(payable(address(0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789)));
     ERC20 chainlink = ERC20(0x326C977E6efc84E512bB9C30f76E30c160eD06FB);
     address mockNFT = 0xc78dF533Dd382567A3308dfa8c4B08F33A1A6014;
 
@@ -27,16 +28,8 @@ abstract contract AATestScriptBase is Script {
     address verifier;
     uint256 verifierKey;
     IAccount account;
-    VerifyingPaymaster paymaster = VerifyingPaymaster(0xe1Fb85Ec54767ED89252751F6667CF566b16f1F0);
+    IVerifyingPaymaster paymaster = IVerifyingPaymaster(0xe1Fb85Ec54767ED89252751F6667CF566b16f1F0);
     function (UserOperation memory) internal view returns(bytes memory) f;
-
-    function deployPaymaster() external {
-        (verifier, verifierKey) = makeAddrAndKey("VERIFIER");
-        uint256 deployerKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
-        vm.startBroadcast(deployerKey);
-        paymaster = new VerifyingPaymaster(entryPoint, verifier);
-        vm.stopBroadcast();
-    }
 
     function runWithNoDeposit() external {
         f = emptyPaymasterAndData;
