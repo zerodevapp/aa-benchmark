@@ -12,12 +12,12 @@ Since these are gas numbers, lower is better.
 
 |                  | Creation | Native transfer | ERC20 transfer | Total  |
 | ---------------- | -------- | --------------- | -------------- | ------ |
-| SimpleAccount    | 410061   | 97690           | 86754          | 594505 |
-| Biconomy         | 296892   | 100780          | 89577          | 487249 |
-| Etherspot        | 305769   | 100091          | 89172          | 495032 |
-| Kernel v2.0      | 366662   | 106800          | 95877          | 569339 |
-| Kernel v2.1      | 291413   | 103240          | 92289          | 486942 |
-| Kernel v2.1-lite | 256965   | 97331           | 86121          | 440417 |
+| SimpleAccount    | 388815   | 107540          | 96432          | 592787 |
+| Biconomy         | 275646   | 110629          | 99255          | 485530 |
+| Etherspot        | 284456   | 109940          | 98849          | 493245 |
+| Kernel v2.0      | 344687   | 116107          | 105003         | 565797 |
+| Kernel v2.1      | 269168   | 112549          | 101419         | 483136 |
+| Kernel v2.1-lite | 235161   | 107091          | 95702          | 437954 |
 
 ## How to add your implementation
 
