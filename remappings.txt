@@ -1,8 +1,4 @@
-account-abstraction/=lib/account-abstraction/contracts/
 ds-test/=lib/forge-std/lib/ds-test/src/
-etherspot-prime-contracts/=lib/etherspot-prime-contracts/src/
 forge-std/=lib/forge-std/src/
 kernel/=lib/kernel/
-@openzeppelin/=lib/openzeppelin-contracts/
-openzeppelin-contracts/=lib/openzeppelin-contracts/
 solady/=lib/solady/src/

@@ -4,7 +4,7 @@ A benchmark for AA (ERC-4337) smart contract accounts.
 
 All accounts use single-ECDSA signatures.  We plan on expanding to other signing schemes in the future (multisig, RSA, etc.).
 
-## Results (as of Aug 31, 2023)
+## Results (as of Sep 25, 2023)
 
 **Disclaimer** the numbers are obtained from local simulations.  On-chain numbers might differ slightly.
 
@@ -12,12 +12,13 @@ Since these are gas numbers, lower is better.
 
 |                  | Creation | Native transfer | ERC20 transfer | Total  |
 | ---------------- | -------- | --------------- | -------------- | ------ |
-| SimpleAccount    | 388815   | 107540          | 96432          | 592787 |
-| Biconomy         | 275646   | 110629          | 99255          | 485530 |
-| Etherspot        | 284456   | 109940          | 98849          | 493245 |
-| Kernel v2.0      | 344687   | 116107          | 105003         | 565797 |
-| Kernel v2.1      | 269168   | 112549          | 101419         | 483136 |
-| Kernel v2.1-lite | 235161   | 107091          | 95702          | 437954 |
+| SimpleAccount    | 383218   | 101319          | 90907          | 575444 |
+| Biconomy         | 270013   | 104408          | 93730          | 468151 |
+| Etherspot        | 279219   | 103719          | 93324          | 476262 |
+| Kernel v2.0      | 339882   | 110018          | 99622          | 549522 |
+| Kernel v2.1      | 265215   | 106460          | 96038          | 467713 |
+| Kernel v2.1-lite | 230968   | 101002          | 90321          | 422291 |
+
 
 ## How to add your implementation
 
