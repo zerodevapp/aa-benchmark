@@ -72,7 +72,9 @@ contract ProfileKernel is AAGasProfileBase {
     function getSignature(UserOperation memory _op) internal view override returns (bytes memory) {
         return abi.encodePacked(bytes4(0x00000000), signUserOpHash(key, _op));
     }
-    function getDummySig(UserOperation memory _op) internal pure override returns(bytes memory) {
-        return hex"00000000fffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c";
+
+    function getDummySig(UserOperation memory _op) internal pure override returns (bytes memory) {
+        return
+        hex"00000000fffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c";
     }
 }

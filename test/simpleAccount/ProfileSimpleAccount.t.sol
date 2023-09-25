@@ -40,8 +40,9 @@ contract ProfileSimpleAccount is AAGasProfileBase {
     function getInitCode(address _owner) internal view override returns (bytes memory) {
         return abi.encodePacked(address(factory), abi.encodeWithSelector(factory.createAccount.selector, _owner, 0));
     }
-    
-    function getDummySig(UserOperation memory _op) internal pure override returns(bytes memory) {
-        return hex"fffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c";
+
+    function getDummySig(UserOperation memory _op) internal pure override returns (bytes memory) {
+        return
+        hex"fffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c";
     }
 }

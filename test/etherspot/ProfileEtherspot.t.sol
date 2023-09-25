@@ -47,7 +47,8 @@ contract ProfileEtherspot is AAGasProfileBase {
         );
     }
 
-    function getDummySig(UserOperation memory _op) internal pure override returns(bytes memory) {
-        return hex"fffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c";
+    function getDummySig(UserOperation memory _op) internal pure override returns (bytes memory) {
+        return
+        hex"fffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c";
     }
 }

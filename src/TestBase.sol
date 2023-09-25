@@ -67,7 +67,7 @@ abstract contract AAGasProfileBase is Test {
     function fillUserOp(bytes memory _data) internal view returns (UserOperation memory op) {
         op.sender = address(account);
         op.nonce = entryPoint.getNonce(address(account), 0);
-        if(address(account).code.length == 0) {
+        if (address(account).code.length == 0) {
             op.initCode = getInitCode(owner);
         }
         op.callData = _data;
@@ -98,6 +98,7 @@ abstract contract AAGasProfileBase is Test {
         } else {
             eth_before = entryPoint.balanceOf(address(account)) + address(account).balance;
         }
+        // vm.cool to be introduced to foundry
         //VmModified(address(vm)).cool(address(entryPoint));
         //VmModified(address(vm)).cool(address(account));
         entryPoint.handleOps(ops, beneficiary);
@@ -108,8 +109,9 @@ abstract contract AAGasProfileBase is Test {
             eth_after = entryPoint.balanceOf(address(account)) + address(account).balance + _value;
         }
         if (!writeGasProfile) {
-            console.log("case - %s : ", _test, eth_before - eth_after);
-            console.log("prev - %s : ", _test, calculatePreVerificationGas(_op));
+            console.log("case - %s", _test);
+            console.log("  gasUsed       : ", eth_before - eth_after);
+            console.log("  calldatacost  : ", calldataCost(pack(_op)));
         }
         if (writeGasProfile && bytes(scenarioName).length > 0) {
             uint256 gasUsed = eth_before - eth_after;
@@ -204,11 +206,16 @@ abstract contract AAGasProfileBase is Test {
         ret = abi.encodePacked(address(paymaster), uint256(0), uint256(0), r, s, uint8(v));
     }
 
-    function getDummyPaymasterAndData(UserOperation memory _op) internal view returns(bytes memory ret) {
-        ret = abi.encodePacked(address(paymaster), uint256(0), uint256(0), hex"fffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c");
+    function getDummyPaymasterAndData(UserOperation memory _op) internal view returns (bytes memory ret) {
+        ret = abi.encodePacked(
+            address(paymaster),
+            uint256(0),
+            uint256(0),
+            hex"fffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c"
+        );
     }
 
-    function calculatePreVerificationGas(UserOperation memory _op) internal view returns (uint256) {
+    function pack(UserOperation memory _op) internal pure returns (bytes memory) {
         bytes memory packed = abi.encode(
             _op.sender,
             _op.nonce,
@@ -222,24 +229,36 @@ abstract contract AAGasProfileBase is Test {
             _op.paymasterAndData,
             _op.signature
         );
-        uint256 calculated = OV_FIXED + OV_PER_USEROP + OV_PER_WORD * (packed.length + 31) / 32;
-        for(uint256 i = 0; i < packed.length; i++) {
+        return packed;
+    }
+
+    function calldataCost(bytes memory packed) internal view returns (uint256) {
+        uint256 cost = 0;
+        for (uint256 i = 0; i < packed.length; i++) {
             if (packed[i] == 0) {
-                calculated += OV_PER_ZERO_BYTE;
+                cost += OV_PER_ZERO_BYTE;
             } else {
-                calculated += OV_PER_NONZERO_BYTE;
+                cost += OV_PER_NONZERO_BYTE;
             }
         }
+        return cost;
+    }
+
+    // NOTE: this can vary depending on the bundler, this equation is referencing eth-infinitism bundler's pvg calculation
+    function calculatePreVerificationGas(UserOperation memory _op) internal view returns (uint256) {
+        bytes memory packed = pack(_op);
+        uint256 calculated = OV_FIXED + OV_PER_USEROP + OV_PER_WORD * (packed.length + 31) / 32;
+        calculated += calldataCost(packed);
         return calculated;
     }
 
     function createAccount(address _owner) internal virtual;
 
-    function getSignature(UserOperation memory _op) internal virtual view returns (bytes memory);
+    function getSignature(UserOperation memory _op) internal view virtual returns (bytes memory);
 
-    function getDummySig(UserOperation memory _op) internal virtual pure returns(bytes memory);
+    function getDummySig(UserOperation memory _op) internal pure virtual returns (bytes memory);
 
-    function fillData(address _to, uint256 _amount, bytes memory _data) internal virtual view returns (bytes memory);
+    function fillData(address _to, uint256 _amount, bytes memory _data) internal view virtual returns (bytes memory);
 
     function getAccountAddr(address _owner) internal view virtual returns (IAccount _account);
 
