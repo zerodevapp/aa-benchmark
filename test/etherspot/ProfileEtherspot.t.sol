@@ -21,11 +21,11 @@ contract ProfileEtherspot is AAGasProfileBase {
         setAccount();
     }
 
-    function fillData(address _to, uint256 _value, bytes memory _data) internal override returns (bytes memory) {
+    function fillData(address _to, uint256 _value, bytes memory _data) internal view override returns (bytes memory) {
         return abi.encodeWithSelector(EtherspotWallet.execute.selector, _to, _value, _data);
     }
 
-    function getSignature(UserOperation memory _op) internal override returns (bytes memory) {
+    function getSignature(UserOperation memory _op) internal view override returns (bytes memory) {
         return signUserOpHash(key, _op);
     }
 
@@ -34,16 +34,20 @@ contract ProfileEtherspot is AAGasProfileBase {
             address(factory).call(abi.encodeWithSelector(factory.createAccount.selector, entryPoint, _owner, 0));
     }
 
-    function getAccountAddr(address _owner) internal override returns (IAccount) {
+    function getAccountAddr(address _owner) internal view override returns (IAccount) {
         (bool success, bytes memory data) =
             address(factory).staticcall(abi.encodeWithSelector(factory.getAddress.selector, entryPoint, _owner, 0));
         require(success, "getAccountAddr failed");
         return IAccount(abi.decode(data, (address)));
     }
 
-    function getInitCode(address _owner) internal override returns (bytes memory) {
+    function getInitCode(address _owner) internal view override returns (bytes memory) {
         return abi.encodePacked(
             address(factory), abi.encodeWithSelector(factory.createAccount.selector, entryPoint, _owner, 0)
         );
+    }
+
+    function getDummySig(UserOperation memory _op) internal pure override returns(bytes memory) {
+        return hex"fffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c";
     }
 }

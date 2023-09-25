@@ -5,7 +5,7 @@ enum Operation {
 
 interface KernelFactory {
     function createAccount(address impl, bytes calldata _data, uint256 _index) external returns (address);
-    function getAccountAddress(bytes calldata _data, uint256 _index) external returns (address);
+    function getAccountAddress(bytes calldata _data, uint256 _index) external view returns (address);
     function setImplementation(address _impl, bool _approve) external;
 }
 

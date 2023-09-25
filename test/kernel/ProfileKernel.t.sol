@@ -34,7 +34,7 @@ contract ProfileKernel is AAGasProfileBase {
         setAccount();
     }
 
-    function fillData(address _to, uint256 _value, bytes memory _data) internal override returns (bytes memory) {
+    function fillData(address _to, uint256 _value, bytes memory _data) internal view override returns (bytes memory) {
         return abi.encodeWithSelector(Kernel.execute.selector, _to, _value, _data, Operation.Call);
     }
 
@@ -48,7 +48,7 @@ contract ProfileKernel is AAGasProfileBase {
         }
     }
 
-    function getAccountAddr(address _owner) internal override returns (IAccount) {
+    function getAccountAddr(address _owner) internal view override returns (IAccount) {
         return IAccount(
             factory.getAccountAddress(
                 abi.encodeWithSelector(Kernel.initialize.selector, validator, abi.encodePacked(_owner)), 0
@@ -56,7 +56,7 @@ contract ProfileKernel is AAGasProfileBase {
         );
     }
 
-    function getInitCode(address _owner) internal override returns (bytes memory) {
+    function getInitCode(address _owner) internal view override returns (bytes memory) {
         return abi.encodePacked(
             address(factory),
             abi.encodeWithSelector(
@@ -68,7 +68,10 @@ contract ProfileKernel is AAGasProfileBase {
         );
     }
 
-    function getSignature(UserOperation memory _op) internal override returns (bytes memory) {
+    function getSignature(UserOperation memory _op) internal view override returns (bytes memory) {
         return abi.encodePacked(bytes4(0x00000000), signUserOpHash(key, _op));
+    }
+    function getDummySig(UserOperation memory _op) internal pure override returns(bytes memory) {
+        return hex"00000000fffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c";
     }
 }
