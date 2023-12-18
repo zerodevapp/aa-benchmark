@@ -20,6 +20,7 @@ Since these are gas numbers, lower is better.
 | Kernel v2.1-lite | 230968   | 101002          | 90321          | 422291 |
 | Solady ERC4337   | 211982   | 99965           | 89346          | 401293 |
 | SoulWalletCore   | 276529   | 101162          | 90466          | 468157 |
+| Safe 4337        | 401848   | 115469          | 105089         | 622406 |
 
 
 ## How to add your implementation
