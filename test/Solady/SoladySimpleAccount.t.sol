@@ -34,15 +34,15 @@ contract SoladyERC4337Test is AAGasProfileBase {
         (bool success, bytes memory data) =
             address(factory).call(abi.encodeWithSelector(factory.deployDeterministic.selector, _owner, 0));
     }
+
     function getAccountAddr(address _owner) internal view override returns (IAccount) {
         bytes32 hash = factory.initCodeHash();
-        return IAccount(predictDeterministicAddress(hash,0 , address(SOLADY_FACTORY)));
+        return IAccount(predictDeterministicAddress(hash, 0, address(SOLADY_FACTORY)));
     }
 
     function getInitCode(address _owner) internal view override returns (bytes memory) {
-        return abi.encodePacked(
-            address(factory), abi.encodeWithSelector(factory.deployDeterministic.selector, _owner, 0)
-        );
+        return
+            abi.encodePacked(address(factory), abi.encodeWithSelector(factory.deployDeterministic.selector, _owner, 0));
     }
 
     function getDummySig(UserOperation memory _op) internal pure override returns (bytes memory) {
@@ -51,19 +51,19 @@ contract SoladyERC4337Test is AAGasProfileBase {
     }
 
     function predictDeterministicAddress(bytes32 hash, bytes32 salt, address deployer)
-    internal
-    pure
-    returns (address predicted)
-{
-    /// @solidity memory-safe-assembly
-    assembly {
-        // Compute and store the bytecode hash.
-        mstore8(0x00, 0xff) // Write the prefix.
-        mstore(0x35, hash)
-        mstore(0x01, shl(96, deployer))
-        mstore(0x15, salt)
-        predicted := keccak256(0x00, 0x55)
-        mstore(0x35, 0) // Restore the overwritten part of the free memory pointer.
+        internal
+        pure
+        returns (address predicted)
+    {
+        /// @solidity memory-safe-assembly
+        assembly {
+            // Compute and store the bytecode hash.
+            mstore8(0x00, 0xff) // Write the prefix.
+            mstore(0x35, hash)
+            mstore(0x01, shl(96, deployer))
+            mstore(0x15, salt)
+            predicted := keccak256(0x00, 0x55)
+            mstore(0x35, 0) // Restore the overwritten part of the free memory pointer.
+        }
     }
-}
 }
