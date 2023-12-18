@@ -48,7 +48,6 @@ contract SoladyERC4337Test is AAGasProfileBase {
     }
 
     function getAccountAddr(address _owner) internal view override returns (IAccount) {
-        console2.log("_owner", _owner);
         bytes32 salt = keccak256(abi.encodePacked(keccak256(_initializerCalldata(_owner)), uint256(0)));
         bytes memory deploymentData = abi.encodePacked(factory.proxyCreationCode(), uint256(uint160(SAFE_ACCOUNT)));
 
@@ -68,10 +67,6 @@ contract SoladyERC4337Test is AAGasProfileBase {
         return
         hex"fffffffffffffffffffffffffffffff0000000000000000000000000000000007aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1c";
     }
-
-    bytes32 private constant SAFE_OP_TYPEHASH = keccak256(
-        "SafeOp(address safe,uint256 nonce,bytes initCode,bytes callData,uint256 callGasLimit,uint256 verificationGasLimit,uint256 preVerificationGas,uint256 maxFeePerGas,uint256 maxPriorityFeePerGas,bytes paymasterAndData,uint48 validAfter,uint48 validUntil,address entryPoint)"
-    );
 
     struct EncodedSafeOpStruct {
         bytes32 typeHash;
@@ -98,7 +93,9 @@ contract SoladyERC4337Test is AAGasProfileBase {
         validAfter = 0;
         validUntil = type(uint48).max;
         EncodedSafeOpStruct memory encodedSafeOp = EncodedSafeOpStruct({
-            typeHash: SAFE_OP_TYPEHASH,
+            typeHash: keccak256(
+                "SafeOp(address safe,uint256 nonce,bytes initCode,bytes callData,uint256 callGasLimit,uint256 verificationGasLimit,uint256 preVerificationGas,uint256 maxFeePerGas,uint256 maxPriorityFeePerGas,bytes paymasterAndData,uint48 validAfter,uint48 validUntil,address entryPoint)"
+                ),
             safe: userOp.sender,
             nonce: userOp.nonce,
             initCodeHash: keccak256(userOp.initCode),
