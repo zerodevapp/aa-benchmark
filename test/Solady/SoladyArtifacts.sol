@@ -11,7 +11,7 @@ address constant SOLADY_ERC4337 = 0x4d40C4063a11f674BdAe7425Ab6371FdA1a00F8a;
 
 interface ERC4337Factory {
     function deployDeterministic(address owner, bytes32 salt) external payable returns (address account);
-    function implementation() external pure returns(address);
+    function implementation() external pure returns (address);
     function initCodeHash() external view returns (bytes32 result);
 }
 
