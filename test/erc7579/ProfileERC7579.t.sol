@@ -35,6 +35,11 @@ contract ProfileERC7579 is AAGasProfileBase {
         setAccount();
     }
 
+    function getNonce(address account, uint192 key) internal virtual override returns (uint256 nonce) {
+        uint192 key = uint192(bytes24(bytes20(address(validator))));
+        return entryPoint.getNonce(address(account), key);
+    }
+
     function fillData(address _to, uint256 _value, bytes memory _data) internal view override returns (bytes memory) {
         return abi.encodeWithSelector(ERC7579Account.execute.selector, _to, _value, _data);
     }
@@ -75,7 +80,7 @@ contract ProfileERC7579 is AAGasProfileBase {
     }
 
     function getSignature(UserOperation memory _op) internal view override returns (bytes memory) {
-        return abi.encodePacked(validator, signUserOpHash(key, _op));
+        return signUserOpHash(key, _op);
     }
 
     function getDummySig(UserOperation memory _op) internal pure override returns (bytes memory) {
