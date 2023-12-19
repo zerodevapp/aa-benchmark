@@ -4,7 +4,7 @@ A benchmark for AA (ERC-4337) smart contract accounts.
 
 All accounts use single-ECDSA signatures.  We plan on expanding to other signing schemes in the future (multisig, RSA, etc.).
 
-## Results (as of Aug 31, 2023)
+## Results (as of Oct 18, 2023)
 
 **Disclaimer** the numbers are obtained from local simulations.  On-chain numbers might differ slightly.
 
@@ -12,12 +12,16 @@ Since these are gas numbers, lower is better.
 
 |                  | Creation | Native transfer | ERC20 transfer | Total  |
 | ---------------- | -------- | --------------- | -------------- | ------ |
-| SimpleAccount    | 410061   | 97690           | 86754          | 594505 |
-| Biconomy         | 296892   | 100780          | 89577          | 487249 |
-| Etherspot        | 305769   | 100091          | 89172          | 495032 |
-| Kernel v2.0      | 366662   | 106800          | 95877          | 569339 |
-| Kernel v2.1      | 291413   | 103240          | 92289          | 486942 |
-| Kernel v2.1-lite | 256965   | 97331           | 86121          | 440417 |
+| SimpleAccount    | 383218   | 101319          | 90907          | 575444 |
+| Biconomy         | 270013   | 104408          | 93730          | 468151 |
+| Etherspot        | 279219   | 103719          | 93324          | 476262 |
+| Kernel v2.0      | 339882   | 110018          | 99622          | 549522 |
+| Kernel v2.1      | 265215   | 106460          | 96038          | 467713 |
+| Kernel v2.1-lite | 230968   | 101002          | 90321          | 422291 |
+| Solady ERC4337   | 211982   | 99965           | 89346          | 401293 |
+| SoulWalletCore   | 276529   | 101162          | 90466          | 468157 |
+| Safe 4337        | 401848   | 115469          | 105089         | 622406 |
+
 
 ## How to add your implementation
 

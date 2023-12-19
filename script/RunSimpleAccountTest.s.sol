@@ -1,8 +1,16 @@
 pragma solidity ^0.8.0;
 
-import {SimpleAccountFactory, SimpleAccount} from "account-abstraction/samples/SimpleAccountFactory.sol";
-import {UserOperation, IAccount} from "account-abstraction/core/EntryPoint.sol";
+import {UserOperation, IAccount} from "I4337/IAccount.sol";
 import {AATestScriptBase} from "./AATestScriptBase.s.sol";
+
+interface SimpleAccountFactory {
+    function createAccount(address _owner, uint256 _index) external returns (address);
+    function getAddress(address _owner, uint256 _index) external view returns (address);
+}
+
+interface SimpleAccount {
+    function execute(address _to, uint256 _value, bytes calldata _data) external;
+}
 
 contract RunSimpleAccountProfile is AATestScriptBase {
     SimpleAccountFactory factory = SimpleAccountFactory(0x9406Cc6185a346906296840746125a0E44976454);
