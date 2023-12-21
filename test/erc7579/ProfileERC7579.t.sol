@@ -46,36 +46,18 @@ contract ProfileERC7579 is AAGasProfileBase {
 
     function createAccount(address _owner) internal override {
         if (address(account).code.length == 0) {
-            factory.createAccount(
-                0,
-                abi.encode(
-                    address(bootstrap), abi.encodeCall(IBootstrap.singleInitMSA, (validator, abi.encodePacked(_owner)))
-                )
-            );
+            factory.createAccount(0, abi.encodePacked(address(validator), _owner));
         }
     }
 
     function getAccountAddr(address _owner) internal view override returns (IAccount) {
-        return IAccount(
-            factory.getAddress(
-                0,
-                abi.encode(
-                    address(bootstrap), abi.encodeCall(IBootstrap.singleInitMSA, (validator, abi.encodePacked(_owner)))
-                )
-            )
-        );
+        return IAccount(factory.getAddress(0, abi.encodePacked(address(validator), _owner)));
     }
 
     function getInitCode(address _owner) internal view override returns (bytes memory) {
         return abi.encodePacked(
             address(factory),
-            abi.encodeWithSelector(
-                factory.createAccount.selector,
-                0,
-                abi.encode(
-                    address(bootstrap), abi.encodeCall(IBootstrap.singleInitMSA, (validator, abi.encodePacked(_owner)))
-                )
-            )
+            abi.encodeWithSelector(factory.createAccount.selector, 0, abi.encodePacked(address(validator), _owner))
         );
     }
 

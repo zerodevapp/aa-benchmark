@@ -21,7 +21,7 @@ Since these are gas numbers, lower is better.
 | Solady ERC4337    | 211982   | 99965           | 89346          | 401293 |
 | SoulWalletCore    | 276529   | 101162          | 90466          | 468157 |
 | Safe 4337         | 401848   | 115469          | 105089         | 622406 |
-| ERC7579 reference | 296540   | 103761          | 93151          | 493452 |
+| ERC7579 reference | 289438   | 103811          | 93213          | 486462 |
 
 ## How to add your implementation
 
