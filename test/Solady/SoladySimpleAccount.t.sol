@@ -32,7 +32,7 @@ contract SoladyERC4337Test is AAGasProfileBase {
 
     function createAccount(address _owner) internal override {
         (bool success, bytes memory data) =
-            address(factory).call(abi.encodeWithSelector(factory.deployDeterministic.selector, _owner, 0));
+            address(factory).call(abi.encodeWithSelector(factory.createAccount.selector, _owner, 0));
     }
 
     function getAccountAddr(address _owner) internal view override returns (IAccount) {
@@ -42,7 +42,7 @@ contract SoladyERC4337Test is AAGasProfileBase {
 
     function getInitCode(address _owner) internal view override returns (bytes memory) {
         return
-            abi.encodePacked(address(factory), abi.encodeWithSelector(factory.deployDeterministic.selector, _owner, 0));
+            abi.encodePacked(address(factory), abi.encodeWithSelector(factory.createAccount.selector, _owner, 0));
     }
 
     function getDummySig(UserOperation memory _op) internal pure override returns (bytes memory) {
