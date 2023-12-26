@@ -64,13 +64,13 @@ abstract contract AAGasProfileBase is Test {
         vm.deal(address(account), 1e18);
     }
 
-    function getNonce(address account, uint192 key) internal virtual returns (uint256 nonce) {
-        return entryPoint.getNonce(account, key);
+    function getNonce(address account) internal view virtual returns (uint256) {
+        return entryPoint.getNonce(account, 0);
     }
 
-    function fillUserOp(bytes memory _data) internal returns (UserOperation memory op) {
+    function fillUserOp(bytes memory _data) internal view returns (UserOperation memory op) {
         op.sender = address(account);
-        op.nonce = getNonce(address(account), 0);
+        op.nonce = getNonce(address(account));
         if (address(account).code.length == 0) {
             op.initCode = getInitCode(owner);
         }
