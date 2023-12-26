@@ -35,7 +35,7 @@ contract ProfileERC7579 is AAGasProfileBase {
         setAccount();
     }
 
-    function getNonce(address account, uint192 key) internal virtual override returns (uint256 nonce) {
+    function getNonce(address account) internal view virtual override returns (uint256 nonce) {
         uint192 key = uint192(bytes24(bytes20(address(validator))));
         return entryPoint.getNonce(address(account), key);
     }
