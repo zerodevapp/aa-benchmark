@@ -4,7 +4,7 @@ A benchmark for AA (ERC-4337) smart contract accounts.
 
 All accounts use single-ECDSA signatures.  We plan on expanding to other signing schemes in the future (multisig, RSA, etc.).
 
-## Results (as of Oct 18, 2023)
+## Results (as of December 22, 2023)
 
 **Disclaimer** the numbers are obtained from local simulations.  On-chain numbers might differ slightly.
 
@@ -18,7 +18,7 @@ Since these are gas numbers, lower is better.
 | Kernel v2.0      | 339882   | 110018          | 99622          | 549522 |
 | Kernel v2.1      | 265215   | 106460          | 96038          | 467713 |
 | Kernel v2.1-lite | 230968   | 101002          | 90321          | 422291 |
-| Solady ERC4337   | 211982   | 99965           | 89346          | 401293 |
+| Solady ERC4337   | 212262   | 100149          | 89532          | 401943 |
 | SoulWalletCore   | 276529   | 101162          | 90466          | 468157 |
 | Safe 4337        | 401848   | 115469          | 105089         | 622406 |
 | LightAccount     | 279820   | 100910          | 90411          | 471141 |
