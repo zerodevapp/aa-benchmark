@@ -4,7 +4,7 @@ A benchmark for AA (ERC-4337) smart contract accounts.
 
 All accounts use single-ECDSA signatures. We plan on expanding to other signing schemes in the future (multisig, RSA, etc.).
 
-## Results (as of December 22, 2023)
+## Results (as of February 24, 2024)
 
 **Disclaimer** the numbers are obtained from local simulations. On-chain numbers might differ slightly.
 
@@ -23,6 +23,7 @@ Since these are gas numbers, lower is better.
 | Safe 4337         | 401848   | 115469          | 105089         | 622406 |
 | LightAccount      | 279820   | 100910          | 90411          | 471141 |
 | ERC7579 reference | 289438   | 103811          | 93213          | 486462 |
+| Alchemy ModularAccount | 827723   | 106630          | 96438          | 1030791 |
 
 ## How to add your implementation
 
