@@ -4,6 +4,8 @@ A benchmark for AA (ERC-4337) smart contract accounts.
 
 All accounts use single-ECDSA signatures. We plan on expanding to other signing schemes in the future (multisig, RSA, etc.).
 
+Note that these numbers are most relevant for L1s like Ethereum/Polygon.  For L2s (e.g. Arbitrum/Optimism/Base), there's a [L1 data cost](https://docs.optimism.io/stack/transactions/fees#l1-data-fee) that's not measured.
+
 ## Results (as of February 24, 2024)
 
 **Disclaimer** the numbers are obtained from local simulations. On-chain numbers might differ slightly.
