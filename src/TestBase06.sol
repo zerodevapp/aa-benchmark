@@ -1,7 +1,7 @@
 pragma solidity ^0.8.0;
 
-import {IEntryPoint} from "I4337/IEntryPoint.sol";
-import {UserOperation, IAccount} from "I4337/IAccount.sol";
+import {IEntryPoint} from "account-abstraction/legacy/v06/IEntryPoint06.sol";
+import {UserOperation06 as UserOperation, IAccount06 as IAccount} from "account-abstraction/legacy/v06/IAccount06.sol";
 import {IVerifyingPaymaster} from "src/interfaces/IVerifyingPaymaster.sol";
 import {ENTRYPOINT_0_6_BYTECODE, CREATOR_0_6_BYTECODE} from "src/artifacts/EntrypointArtifacts.sol";
 import {VERIFYINGPAYMASTER_BYTECODE, VERIFYINGPAYMASTER_ADDRESS} from "src/artifacts/VerifyingPaymasterArtifacts.sol";
@@ -24,7 +24,7 @@ uint256 constant OV_PER_WORD = 4;
 uint256 constant OV_PER_ZERO_BYTE = 4;
 uint256 constant OV_PER_NONZERO_BYTE = 16;
 
-abstract contract AAGasProfileBase is Test {
+abstract contract AAGasProfileBase06 is Test {
     string public name;
     string public scenarioName;
     uint256 sum;
@@ -68,7 +68,7 @@ abstract contract AAGasProfileBase is Test {
         return entryPoint.getNonce(account, 0);
     }
 
-    function fillUserOp(bytes memory _data) internal view returns (UserOperation memory op) {
+    function fillUserOp(bytes memory _data) internal view virtual returns (UserOperation memory op) {
         op.sender = address(account);
         op.nonce = getNonce(address(account));
         if (address(account).code.length == 0) {

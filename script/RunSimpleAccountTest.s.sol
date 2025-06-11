@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import {UserOperation, IAccount} from "I4337/IAccount.sol";
+import {UserOperation06 as UserOperation, IAccount06 as IAccount} from "account-abstraction/legacy/v06/IAccount06.sol";
 import {AATestScriptBase} from "./AATestScriptBase.s.sol";
 
 interface SimpleAccountFactory {

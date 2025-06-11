@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import "src/TestBase.sol";
+import "src/TestBase06.sol";
 
 import {
     SOLADY_ERC4337_BYTECODE,
@@ -11,7 +11,7 @@ import {
     ERC4337
 } from "./SoladyArtifacts.sol";
 
-contract SoladyERC4337Test is AAGasProfileBase {
+contract SoladyERC4337Test is AAGasProfileBase06{
     ERC4337Factory factory;
 
     function setUp() external {

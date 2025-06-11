@@ -31,7 +31,7 @@ Since these are gas numbers, lower is better.
 
 1. Fork this repo.
 2. Add your test file to `./test/`; create a folder if needed.
-3. Inherit `src/TestBase.sol` and override `getSignature()`, `fillData()`, `createAccount()`, `getAccountAddr()`, `getInitCode()`.
+3. Inherit `src/TestBase06.sol` and override `getSignature()`, `fillData()`, `createAccount()`, `getAccountAddr()`, `getInitCode()`.
    - `getSignature()`: should return appropriate signature based on `_op` (e.g. should return ECDSA signature).
    - `fillData()`: should return appropriate data for `userOp.callData`.
    - `createAccount()`: should create the wallet. Skip this if your factory only allows for creation through the EntryPoint.

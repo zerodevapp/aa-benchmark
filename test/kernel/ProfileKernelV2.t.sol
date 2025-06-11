@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import "src/TestBase.sol";
+import "src/TestBase06.sol";
 import {
     Kernel,
     KernelFactory,
@@ -27,7 +27,7 @@ interface V2Factory {
         returns (address);
 }
 
-contract ProfileKernel is AAGasProfileBase {
+contract ProfileKernel is AAGasProfileBase06{
     Kernel kernelImpl;
     V2Factory factory;
     address validator;

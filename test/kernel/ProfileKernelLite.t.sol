@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import "src/TestBase.sol";
+import "src/TestBase06.sol";
 import {
     Kernel,
     KernelFactory,
@@ -11,7 +11,7 @@ import {
     KERNEL_LITE_CODE
 } from "./KernelArtifacts.sol";
 
-contract ProfileKernelLite is AAGasProfileBase {
+contract ProfileKernelLite is AAGasProfileBase06{
     address kernelImpl;
     KernelFactory factory;
     address factoryOwner;

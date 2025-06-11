@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import "src/TestBase.sol";
+import "src/TestBase06.sol";
 import {
     EtherspotWalletFactory,
     EtherspotWallet,
@@ -10,7 +10,7 @@ import {
     ETHERSPOT_FACTORY_BYTECODE
 } from "./EtherspotArtifacts.sol";
 
-contract ProfileEtherspot is AAGasProfileBase {
+contract ProfileEtherspot is AAGasProfileBase06{
     EtherspotWalletFactory factory;
 
     function setUp() external {

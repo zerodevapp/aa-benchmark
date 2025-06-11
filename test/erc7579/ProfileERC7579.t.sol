@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import "src/TestBase.sol";
+import "src/TestBase06.sol";
 import {
     ERC7579Account,
     ERC7579Factory,
@@ -15,7 +15,7 @@ import {
     BOOTSTRAP_CODE
 } from "./ERC7579Artifacts.sol";
 
-contract ProfileERC7579 is AAGasProfileBase {
+contract ProfileERC7579 is AAGasProfileBase06 {
     address implementation;
     ERC7579Factory factory;
     address factoryOwner;

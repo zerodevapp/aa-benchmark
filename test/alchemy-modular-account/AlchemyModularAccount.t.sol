@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import "src/TestBase.sol";
+import "src/TestBase06.sol";
 
 import {
     ALCHEMY_MODULAR_ACCOUNT_FACTORY_BYTECODE,
@@ -13,7 +13,7 @@ import {
     AlchemyModularAccount
 } from "./AlchemyModularAccountArtificats.sol";
 
-contract AlchemyModularAccountTest is AAGasProfileBase {
+contract AlchemyModularAccountTest is AAGasProfileBase06{
     AlchemyModularAccountFactory factory;
 
     function setUp() external {

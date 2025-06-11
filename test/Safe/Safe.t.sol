@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import "src/TestBase.sol";
+import "src/TestBase06.sol";
 
 import {
     SAFE_FACTORY_BYTECODE,
@@ -17,7 +17,7 @@ import {
     AddModulesLib
 } from "./SafeArtifacts.sol";
 
-contract SoladyERC4337Test is AAGasProfileBase {
+contract SoladyERC4337Test is AAGasProfileBase06 {
     SafeProxyFactory factory;
 
     function setUp() external {

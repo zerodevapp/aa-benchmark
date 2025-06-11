@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import "src/TestBase.sol";
+import "src/TestBase06.sol";
 
 import {
     LIGHT_ACCOUNT_FACTORY_BYTECODE,
@@ -11,7 +11,7 @@ import {
     LightAccount
 } from "./LightAccountArtificats.sol";
 
-contract LightAccountTest is AAGasProfileBase {
+contract LightAccountTest is AAGasProfileBase06{
     LightAccountFactory factory;
 
     function setUp() external {

@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import "src/TestBase.sol";
+import "src/TestBase06.sol";
 import {
     SOULWALLETCORE_IMPL,
     SOULWALLETCORE_IMPL_BYTECODE,
@@ -10,7 +10,7 @@ import {
     SoulWalletCore
 } from "./SoulWalletCoreArtifacts.sol";
 
-contract ProfileBcnmy is AAGasProfileBase {
+contract ProfileBcnmy is AAGasProfileBase06{
     SoulWalletFactory factory;
 
     function setUp() external {

@@ -7,3 +7,7 @@
 [submodule "lib/I4337"]
 	path = lib/I4337
 	url = https://github.com/leekt/I4337
+[submodule "lib/account-abstraction"]
+	path = lib/account-abstraction
+	url = https://github.com/eth-infinitism/account-abstraction
+	branch = develop

@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import "src/TestBase.sol";
+import "src/TestBase06.sol";
 import {
     BCNMY_IMPL,
     BCNMY_IMPL_BYTECODE,
@@ -10,7 +10,7 @@ import {
     SmartAccount
 } from "./BcnmyArtifacts.sol";
 
-contract ProfileBcnmy is AAGasProfileBase {
+contract ProfileBcnmy is AAGasProfileBase06{
     SmartAccountFactory factory;
 
     function setUp() external {

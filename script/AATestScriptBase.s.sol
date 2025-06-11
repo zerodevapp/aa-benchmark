@@ -1,7 +1,7 @@
 pragma solidity ^0.8.0;
 
-import {IEntryPoint} from "I4337/IEntryPoint.sol";
-import {UserOperation, IAccount} from "I4337/IAccount.sol";
+import {IEntryPoint} from "account-abstraction/legacy/v06/IEntryPoint06.sol";
+import {UserOperation06 as UserOperation, IAccount06 as IAccount} from "account-abstraction/legacy/v06/IAccount06.sol";
 import {IVerifyingPaymaster} from "src/interfaces/IVerifyingPaymaster.sol";
 import {ECDSA} from "solady/utils/ECDSA.sol";
 import {ERC20} from "solady/tokens/ERC20.sol";

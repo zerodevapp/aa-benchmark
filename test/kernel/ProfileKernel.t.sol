@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import "src/TestBase.sol";
+import "src/TestBase06.sol";
 import {
     Kernel,
     KernelFactory,
@@ -13,7 +13,7 @@ import {
     KERNEL_ECDSA_VALIDATOR_CODE
 } from "./KernelArtifacts.sol";
 
-contract ProfileKernel is AAGasProfileBase {
+contract ProfileKernel is AAGasProfileBase06{
     Kernel kernelImpl;
     KernelFactory factory;
     address validator;

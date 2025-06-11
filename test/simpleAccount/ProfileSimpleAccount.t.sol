@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import "src/TestBase.sol";
+import "src/TestBase06.sol";
 import {
     SimpleAccountFactory,
     SimpleAccount,
@@ -10,7 +10,7 @@ import {
     SIMPLE_ACCOUNT_IMPL_BYTECODE
 } from "./SimpleAccountArtifacts.sol";
 
-contract ProfileSimpleAccount is AAGasProfileBase {
+contract ProfileSimpleAccount is AAGasProfileBase06 {
     SimpleAccountFactory factory;
 
     function setUp() external {
