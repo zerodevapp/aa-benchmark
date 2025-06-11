@@ -64,8 +64,8 @@ abstract contract AAGasProfileBase06 is Test {
         vm.deal(address(account), 1e18);
     }
 
-    function getNonce(address account) internal view virtual returns (uint256) {
-        return entryPoint.getNonce(account, 0);
+    function getNonce(address _account) internal view virtual returns (uint256) {
+        return entryPoint.getNonce(_account, 0);
     }
 
     function fillUserOp(bytes memory _data) internal view virtual returns (UserOperation memory op) {
