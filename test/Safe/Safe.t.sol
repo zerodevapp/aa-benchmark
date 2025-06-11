@@ -42,7 +42,7 @@ contract SoladyERC4337Test is AAGasProfileBase06 {
     }
 
     function createAccount(address _owner) internal override {
-        (bool success, bytes memory data) = address(factory).call(
+        (bool success, bytes memory data) = address(factory).call{gas : 1000000}(
             abi.encodeWithSelector(factory.createProxyWithNonce.selector, SAFE_ACCOUNT, _initializerCalldata(_owner), 0)
         );
     }
