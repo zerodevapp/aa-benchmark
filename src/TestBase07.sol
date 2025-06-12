@@ -1,10 +1,13 @@
 pragma solidity ^0.8.0;
 
 import {IEntryPoint} from "account-abstraction/interfaces/IEntryPoint.sol";
+import {IEntryPointSimulations} from "account-abstraction/interfaces/IEntryPointSimulations.sol";
 import {PackedUserOperation, IAccount} from "account-abstraction/interfaces/IAccount.sol";
 import {IVerifyingPaymaster} from "src/interfaces/IVerifyingPaymaster.sol";
 import {ENTRYPOINT_0_7_INITCODE, ENTRYPOINT_0_7_ADDR} from "src/artifacts/EntrypointArtifacts.sol";
+import {ENTRYPOINT_SIMULATION_0_7_INITCODE, ENTRYPOINT_SIMULATION_0_7_ADDR} from "src/artifacts/EntrypointArtifacts.sol";
 import {ArtifactsLib, DeployArtifact} from "src/artifacts/ArtifactsLib.sol";
+import {LibBytes} from "solady/utils/LibBytes.sol";
 import "solady/utils/ECDSA.sol";
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
@@ -25,11 +28,13 @@ uint256 constant OV_PER_NONZERO_BYTE = 16;
 
 
 abstract contract AAGasProfileBase07 is Test {
+    error Gas(uint256);
     string public name;
     string public scenarioName;
     uint256 sum;
     string jsonObj;
     IEntryPoint public entryPoint;
+    IEntryPointSimulations public simulation;
     address payable public beneficiary;
     IAccount public account;
     address public owner;
@@ -41,9 +46,15 @@ abstract contract AAGasProfileBase07 is Test {
 
 
     function setUp() public virtual {
+        writeGasProfile = vm.envOr("WRITE_GAS_PROFILE", false);
         entryPoint = IEntryPoint(ArtifactsLib.deploy(DeployArtifact({
             initCode : ENTRYPOINT_0_7_INITCODE,
             addr : ENTRYPOINT_0_7_ADDR
+        })));
+
+        simulation = IEntryPointSimulations(ArtifactsLib.deploy(DeployArtifact({
+            initCode : ENTRYPOINT_SIMULATION_0_7_INITCODE,
+            addr :  ENTRYPOINT_SIMULATION_0_7_ADDR
         })));
         (owner, key) = makeAddrAndKey("owner");
         beneficiary = payable(makeAddr("beneficiary"));
@@ -51,6 +62,7 @@ abstract contract AAGasProfileBase07 is Test {
 
         account = IAccount(_getAccount());
         vm.deal(address(account), 1e18);
+        jsonObj = string(abi.encodePacked(scenarioName, " ", name));
     }
 
     function pack(PackedUserOperation memory _op) internal pure returns (bytes memory) {
@@ -119,7 +131,7 @@ abstract contract AAGasProfileBase07 is Test {
             console.log("  calldatacost  : ", calldataCost(pack(_op)));
         }
         if (writeGasProfile && bytes(scenarioName).length > 0) {
-            uint256 gasUsed = eth_before - eth_after;
+            uint256 gasUsed = eth_before - eth_after - _value;
             vm.serializeUint(jsonObj, _test, gasUsed);
             sum += gasUsed;
         }
@@ -131,12 +143,56 @@ abstract contract AAGasProfileBase07 is Test {
             op.initCode = _getInitCode();
         }
         op.callData = _data;
-        op.accountGasLimits = bytes32(abi.encodePacked(uint128(1000000), uint128(1000000)));
-        op.preVerificationGas = 1000000;
+        op.accountGasLimits = bytes32(abi.encodePacked(uint128(100000), uint128(100000)));
+        op.preVerificationGas = 21000;
         op.gasFees = bytes32(abi.encodePacked(uint128(1), uint128(1)));
         op.nonce = _getNonce(op);
         op.paymasterAndData = "";
         op.signature = _getSignature(op);
+        op.accountGasLimits = calculateUserOpGasLimits(op);
+        op.signature = _getSignature(op);
+    }
+
+    function calculateUserOpGasLimits(PackedUserOperation memory _op) internal returns(bytes32 res) {
+        uint128 validationGasLimit = 50000; // offset
+        try this.getVerificationGasLimit(_op) {} catch (bytes memory reason) {
+            require(reason.length == 36, "Not proper error");
+            uint256 validation = uint256(bytes32(LibBytes.slice(reason, 4, 36)));
+            validationGasLimit += uint128(validation);
+        }
+
+        uint128 executionGasLimit = 5000;
+        try this.getExecutionGasLimit(_op.callData) {} catch (bytes memory reason) {
+            require(reason.length == 36, "Not proper error");
+            executionGasLimit += uint128(uint256(bytes32(LibBytes.slice(reason, 4, 36))));
+        }
+
+        return bytes32(abi.encodePacked(validationGasLimit, executionGasLimit));
+    }
+
+    function getVerificationGasLimit(PackedUserOperation calldata op) external {
+        vm.startPrank(address(entryPoint));
+        uint256 used = gasleft();
+        if(op.initCode.length > 0) {
+            address factory = address(bytes20(op.initCode));
+            (bool success, ) = factory.call{gas: 1000000}(op.initCode[20:]);
+            require(success);
+        }
+        uint256 res = account.validateUserOp{gas: 1000000}(op, bytes32(0), op.paymasterAndData.length);
+        used -= gasleft();
+        vm.stopPrank();
+        require(uint160(res) == 1);
+        revert Gas(used);
+    }
+    
+    function getExecutionGasLimit(bytes calldata callData) external {
+        vm.startPrank(address(entryPoint));
+        uint256 used = gasleft();
+        (bool success, ) = address(account).call{gas: 1000000}(callData);
+        used -= gasleft();
+        vm.stopPrank();
+        require(success);
+        revert Gas(used);
     }
 
     function testCreation() public {
@@ -159,5 +215,20 @@ abstract contract AAGasProfileBase07 is Test {
         _amount = bound(_amount, 1, mockERC20.balanceOf(address(account)));
         PackedUserOperation memory op = fillUserOp(_fillData(address(mockERC20), 0, abi.encodeWithSelector(mockERC20.transfer.selector, _recipient, _amount)));
         executeUserOp(op, "erc20", 0);
+    }
+
+    function testBenchmark1Vanila() external {
+        address recipient = makeAddr("Recipient");
+        uint256 amount = 1000;
+        scenarioName = "vanila";
+        jsonObj = string(abi.encodePacked(scenarioName, " ", name));
+        testCreation();
+        testTransferNative();
+        testTransferERC20(recipient, amount);
+        if (writeGasProfile) {
+            string memory res = vm.serializeUint(jsonObj, "sum", sum);
+            console.log(res);
+            vm.writeJson(res, string.concat("./results/", scenarioName, "_", name, ".json"));
+        }
     }
 }
