@@ -3,27 +3,32 @@ pragma solidity ^0.8.0;
 import {AAGasProfileBase07} from "src/TestBase07.sol";
 import {DeployArtifact, ArtifactsLib} from "src/artifacts/ArtifactsLib.sol";
 import {PackedUserOperation} from "account-abstraction/interfaces/PackedUserOperation.sol";
-import "./KernelArtifacts.sol";
+import "./NexusArtifacts.sol";
 
-contract ProfileKernel is AAGasProfileBase07 {
-    IKernelFactory public kernelFactory;
+contract ProfileNexus is AAGasProfileBase07 {
+    INexusFactory public nexusFactory;
     address ecdsaValidator;
 
+    address bootstrap;
+    address nexus;
+
     function _initializeTest() internal override {
-        name = "Kernel";
+        name = "Nexus";
 
-        address kernel = ArtifactsLib.deploy(DeployArtifact({initCode: KERNEL_3_3_INITCODE, addr: KERNEL_3_3_ADDR}));
+        ecdsaValidator = ArtifactsLib.deploy(DeployArtifact({initCode: K1_VALIDATOR_INITCODE, addr: K1_VALIDATOR_ADDR}));
 
-        kernelFactory = IKernelFactory(
-            ArtifactsLib.deploy(DeployArtifact({initCode: KERNEL_3_3_FACTORY_INITCODE, addr: KERNEL_3_3_FACTORY_ADDR}))
+        bootstrap =
+            ArtifactsLib.deploy(DeployArtifact({initCode: NEXUS_BOOTSTRAP_INITCODE, addr: NEXUS_BOOTSTRAP_ADDR}));
+
+        nexus = ArtifactsLib.deploy(DeployArtifact({initCode: NEXUS_INITCODE, addr: NEXUS_ADDR}));
+
+        nexusFactory = INexusFactory(
+            ArtifactsLib.deploy(DeployArtifact({initCode: NEXUS_FACTORY_INITCODE, addr: NEXUS_FACTORY_ADDR}))
         );
-
-        ecdsaValidator =
-            ArtifactsLib.deploy(DeployArtifact({initCode: ECDSA_VALIDATOR_INITCODE, addr: ECDSA_VALIDATOR_ADDR}));
     }
 
     function _createAccount() internal override returns (address) {
-        return kernelFactory.createAccount(initializeData(), bytes32(0));
+        return nexusFactory.createAccount(initializeData(), bytes32(0));
     }
 
     function _fillData(address _recipient, uint256 _amount, bytes memory _data)
@@ -31,8 +36,7 @@ contract ProfileKernel is AAGasProfileBase07 {
         override
         returns (bytes memory)
     {
-        return
-            abi.encodeWithSelector(IKernel.execute.selector, bytes32(0), abi.encodePacked(_recipient, _amount, _data));
+        return abi.encodeWithSelector(INexus.execute.selector, bytes32(0), abi.encodePacked(_recipient, _amount, _data));
     }
 
     function _getNonce(PackedUserOperation memory _op) internal override returns (uint256) {
@@ -40,23 +44,19 @@ contract ProfileKernel is AAGasProfileBase07 {
     }
 
     function initializeData() internal returns (bytes memory) {
-        return abi.encodeWithSelector(
-            IKernel.initialize.selector,
-            bytes21(abi.encodePacked(bytes1(0x01), ecdsaValidator)),
-            address(0),
-            abi.encodePacked(owner),
-            hex"",
-            new bytes[](0)
+        return abi.encode(
+            bootstrap,
+            abi.encodeWithSelector(INexusBootstrap.initNexusWithDefaultValidator.selector, abi.encodePacked(owner))
         );
     }
 
     function _getAccount() internal override returns (address) {
-        return kernelFactory.getAddress(initializeData(), bytes32(0));
+        return nexusFactory.computeAccountAddress(initializeData(), bytes32(0));
     }
 
     function _getInitCode() internal override returns (bytes memory) {
         return abi.encodePacked(
-            kernelFactory, abi.encodeWithSelector(IKernelFactory.createAccount.selector, initializeData(), bytes32(0))
+            nexusFactory, abi.encodeWithSelector(INexusFactory.createAccount.selector, initializeData(), bytes32(0))
         );
     }
 

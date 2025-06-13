@@ -11,7 +11,7 @@ import {
     ERC4337
 } from "./SoladyArtifacts.sol";
 
-contract SoladyERC4337Test is AAGasProfileBase06{
+contract SoladyERC4337Test is AAGasProfileBase06 {
     ERC4337Factory factory;
 
     function setUp() external {
@@ -41,8 +41,7 @@ contract SoladyERC4337Test is AAGasProfileBase06{
     }
 
     function getInitCode(address _owner) internal view override returns (bytes memory) {
-        return
-            abi.encodePacked(address(factory), abi.encodeWithSelector(factory.createAccount.selector, _owner, 0));
+        return abi.encodePacked(address(factory), abi.encodeWithSelector(factory.createAccount.selector, _owner, 0));
     }
 
     function getDummySig(UserOperation memory _op) internal pure override returns (bytes memory) {

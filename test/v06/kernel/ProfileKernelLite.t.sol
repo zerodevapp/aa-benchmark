@@ -11,7 +11,7 @@ import {
     KERNEL_LITE_CODE
 } from "./KernelArtifacts.sol";
 
-contract ProfileKernelLite is AAGasProfileBase06{
+contract ProfileKernelLite is AAGasProfileBase06 {
     address kernelImpl;
     KernelFactory factory;
     address factoryOwner;

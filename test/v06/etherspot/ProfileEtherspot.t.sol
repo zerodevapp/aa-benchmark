@@ -10,7 +10,7 @@ import {
     ETHERSPOT_FACTORY_BYTECODE
 } from "./EtherspotArtifacts.sol";
 
-contract ProfileEtherspot is AAGasProfileBase06{
+contract ProfileEtherspot is AAGasProfileBase06 {
     EtherspotWalletFactory factory;
 
     function setUp() external {
@@ -30,8 +30,9 @@ contract ProfileEtherspot is AAGasProfileBase06{
     }
 
     function createAccount(address _owner) internal override {
-        (bool success, bytes memory data) =
-            address(factory).call{gas : 1000000}(abi.encodeWithSelector(factory.createAccount.selector, entryPoint, _owner, 0));
+        (bool success, bytes memory data) = address(factory).call{gas: 1000000}(
+            abi.encodeWithSelector(factory.createAccount.selector, entryPoint, _owner, 0)
+        );
     }
 
     function getAccountAddr(address _owner) internal view override returns (IAccount) {

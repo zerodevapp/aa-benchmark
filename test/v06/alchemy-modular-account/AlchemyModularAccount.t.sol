@@ -13,7 +13,7 @@ import {
     AlchemyModularAccount
 } from "./AlchemyModularAccountArtificats.sol";
 
-contract AlchemyModularAccountTest is AAGasProfileBase06{
+contract AlchemyModularAccountTest is AAGasProfileBase06 {
     AlchemyModularAccountFactory factory;
 
     function setUp() external {

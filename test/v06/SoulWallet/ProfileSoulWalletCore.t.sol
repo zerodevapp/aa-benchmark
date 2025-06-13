@@ -10,7 +10,7 @@ import {
     SoulWalletCore
 } from "./SoulWalletCoreArtifacts.sol";
 
-contract ProfileBcnmy is AAGasProfileBase06{
+contract ProfileBcnmy is AAGasProfileBase06 {
     SoulWalletFactory factory;
 
     function setUp() external {
@@ -50,7 +50,8 @@ contract ProfileBcnmy is AAGasProfileBase06{
         bytes32 ownerBytes32 = bytes32(uint256(uint160(_owner)));
         bytes memory initializer = abi.encodeWithSelector(SoulWalletCore.initialize.selector, ownerBytes32);
 
-        (bool success,) = address(factory).call{gas : 1000000}(abi.encodeWithSelector(factory.createWallet.selector, initializer, 0));
+        (bool success,) =
+            address(factory).call{gas: 1000000}(abi.encodeWithSelector(factory.createWallet.selector, initializer, 0));
         (success);
     }
 

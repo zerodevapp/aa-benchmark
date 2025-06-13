@@ -1,3 +1,6 @@
+- [ ] numbers for L2(all different l2s)
+- [ ] numbers for 7702
+
 # AA Benchmark
 
 A benchmark for AA (ERC-4337) smart contract accounts.

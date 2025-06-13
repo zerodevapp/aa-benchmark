@@ -42,7 +42,7 @@ contract SoladyERC4337Test is AAGasProfileBase06 {
     }
 
     function createAccount(address _owner) internal override {
-        (bool success, bytes memory data) = address(factory).call{gas : 1000000}(
+        (bool success, bytes memory data) = address(factory).call{gas: 1000000}(
             abi.encodeWithSelector(factory.createProxyWithNonce.selector, SAFE_ACCOUNT, _initializerCalldata(_owner), 0)
         );
     }
@@ -95,7 +95,7 @@ contract SoladyERC4337Test is AAGasProfileBase06 {
         EncodedSafeOpStruct memory encodedSafeOp = EncodedSafeOpStruct({
             typeHash: keccak256(
                 "SafeOp(address safe,uint256 nonce,bytes initCode,bytes callData,uint256 callGasLimit,uint256 verificationGasLimit,uint256 preVerificationGas,uint256 maxFeePerGas,uint256 maxPriorityFeePerGas,bytes paymasterAndData,uint48 validAfter,uint48 validUntil,address entryPoint)"
-                ),
+            ),
             safe: userOp.sender,
             nonce: userOp.nonce,
             initCodeHash: keccak256(userOp.initCode),

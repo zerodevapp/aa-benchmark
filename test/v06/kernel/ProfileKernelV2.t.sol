@@ -27,7 +27,7 @@ interface V2Factory {
         returns (address);
 }
 
-contract ProfileKernel is AAGasProfileBase06{
+contract ProfileKernel is AAGasProfileBase06 {
     Kernel kernelImpl;
     V2Factory factory;
     address validator;

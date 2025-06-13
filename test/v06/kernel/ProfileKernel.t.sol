@@ -13,7 +13,7 @@ import {
     KERNEL_ECDSA_VALIDATOR_CODE
 } from "./KernelArtifacts.sol";
 
-contract ProfileKernel is AAGasProfileBase06{
+contract ProfileKernel is AAGasProfileBase06 {
     Kernel kernelImpl;
     KernelFactory factory;
     address validator;

@@ -10,7 +10,7 @@ import {
     SmartAccount
 } from "./BcnmyArtifacts.sol";
 
-contract ProfileBcnmy is AAGasProfileBase06{
+contract ProfileBcnmy is AAGasProfileBase06 {
     SmartAccountFactory factory;
 
     function setUp() external {
@@ -30,8 +30,9 @@ contract ProfileBcnmy is AAGasProfileBase06{
     }
 
     function createAccount(address _owner) internal override {
-        (bool success, bytes memory data) =
-            address(factory).call{gas : 1000000}(abi.encodeWithSelector(factory.deployCounterFactualAccount.selector, _owner, 0));
+        (bool success, bytes memory data) = address(factory).call{gas: 1000000}(
+            abi.encodeWithSelector(factory.deployCounterFactualAccount.selector, _owner, 0)
+        );
     }
 
     function getAccountAddr(address _owner) internal view override returns (IAccount) {
