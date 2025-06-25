@@ -31,7 +31,7 @@ contract ProfileAlchemy7702 is AAGasProfileBase07 {
     }
 
     function _getNonce(PackedUserOperation memory _op) internal override returns (uint256) {
-        return entryPoint.getNonce(address(account), 0);
+        return entryPoint.getNonce(address(account), 1);
     }
 
     function initializeData() internal returns (bytes memory) {
@@ -56,6 +56,6 @@ contract ProfileAlchemy7702 is AAGasProfileBase07 {
         bytes32 s;
         uint8 v;
         (v, r, s) = vm.sign(key, ECDSA.toEthSignedMessageHash(hash));
-        return abi.encodePacked(r, s, v);
+        return abi.encodePacked(bytes1(0xff), bytes1(0x00), r, s, v);
     }
 }
